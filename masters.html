@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мастера — Bloom Salon</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" class="burger">☰</label>
+      <nav>
+        <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="services.html">Услуги</a></li>
+        <li><a href="masters.html" class="active">Мастера</a></li>
+        <li><a href="booking.html">Запись</a></li>
+        <li><a href="about.html">О нас</a></li>
+        <li><a href="profile.html">Профиль</a></li>
+        <li><a href="login.html">Выйти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-banner">
+    <h1 class="fade-up">Наши мастера</h1>
+  </section>
+
+  <main class="section">
+    <div class="container">
+      <div class="grid">
+        <article class="card master">
+          <div class="avatar" style="background-image:url(images/model.jpg)"></div>
+          <div class="card-body">
+            <h3>Анна Ли</h3>
+            <p class="meta">Стилист-колорист</p>
+            <p class="stars">★★★★★</p>
+            <a href="booking.html" class="btn btn-small">Записаться</a>
+          </div>
+        </article>
+        <article class="card master">
+          <div class="avatar" style="background-image:url(images/wash.jpg)"></div>
+          <div class="card-body">
+            <h3>Дана Ким</h3>
+            <p class="meta">Стилист</p>
+            <p class="stars">★★★★★</p>
+            <a href="booking.html" class="btn btn-small">Записаться</a>
+          </div>
+        </article>
+        <article class="card master">
+          <div class="avatar" style="background-image:url(images/beard.jpg)"></div>
+          <div class="card-body">
+            <h3>Ерлан Сеитов</h3>
+            <p class="meta">Барбер</p>
+            <p class="stars">★★★★★</p>
+            <a href="booking.html" class="btn btn-small">Записаться</a>
+          </div>
+        </article>
+        <article class="card master">
+          <div class="avatar" style="background-image:url(images/nail-art.jpg)"></div>
+          <div class="card-body">
+            <h3>Мадина Ахметова</h3>
+            <p class="meta">Мастер маникюра</p>
+            <p class="stars">★★★★★</p>
+            <a href="booking.html" class="btn btn-small">Записаться</a>
+          </div>
+        </article>
+        <article class="card master">
+          <div class="avatar" style="background-image:url(images/spa.jpg)"></div>
+          <div class="card-body">
+            <h3>Алия Нурлан</h3>
+            <p class="meta">Косметолог, визажист</p>
+            <p class="stars">★★★★★</p>
+            <a href="booking.html" class="btn btn-small">Записаться</a>
+          </div>
+        </article>
+      </div>
+
+      <h2 class="section-title" style="margin-top:70px">Расписание на 15 октября</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Мастер</th><th>10:00</th><th>12:00</th><th>14:00</th><th>16:00</th><th>18:00</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Анна Ли</td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td></tr>
+            <tr><td>Дана Ким</td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td></tr>
+            <tr><td>Ерлан Сеитов</td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td></tr>
+            <tr><td>Мадина Ахметова</td><td><span class="status busy">занято</span></td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td><td><span class="status free">свободно</span></td></tr>
+            <tr><td>Алия Нурлан</td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td><td><span class="status busy">занято</span></td><td><span class="status free">свободно</span></td><td><span class="status busy">занято</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="logo">Bloom<span>.</span></p>
+      <ul>
+        <li><a href="about.html">О нас</a></li>
+        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="#">Конфиденциальность</a></li>
+        <li><a href="#">Условия</a></li>
+      </ul>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Telegram</a></li>
+      </ul>
+      <small>© 2026 Bloom Beauty Salon. Student Project</small>
+    </div>
+  </footer>
+</body>
+</html>
