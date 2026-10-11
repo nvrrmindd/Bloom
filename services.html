@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Услуги — Bloom Salon</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" class="burger">☰</label>
+      <nav>
+        <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="services.html" class="active">Услуги</a></li>
+        <li><a href="masters.html">Мастера</a></li>
+        <li><a href="booking.html">Запись</a></li>
+        <li><a href="about.html">О нас</a></li>
+        <li><a href="profile.html">Профиль</a></li>
+        <li><a href="login.html">Выйти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-banner">
+    <h1 class="fade-up">Наши услуги</h1>
+  </section>
+
+  <main class="section">
+    <div class="container">
+      <form class="search-bar" action="services.html">
+        <input type="search" name="q" placeholder="Поиск услуги или мастера...">
+        <button class="btn">Найти</button>
+      </form>
+
+      <!-- фильтр по категориям на чистом CSS (radio + :checked) -->
+      <input type="radio" name="cat" id="f-all" class="filter-radio" checked>
+      <input type="radio" name="cat" id="f-hair" class="filter-radio">
+      <input type="radio" name="cat" id="f-nails" class="filter-radio">
+      <input type="radio" name="cat" id="f-face" class="filter-radio">
+      <div class="filters">
+        <label for="f-all">Все</label>
+        <label for="f-hair">Волосы</label>
+        <label for="f-nails">Ногти</label>
+        <label for="f-face">Лицо</label>
+      </div>
+
+      <div class="grid">
+        <article class="card hair">
+          <div class="card-img" style="background-image:url(images/styling.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Волосы</span>
+            <h3>Женская стрижка</h3>
+            <p class="meta">Анна Ли · 60 мин</p>
+            <p class="stars">★★★★★</p>
+            <p class="price">от 8 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card hair">
+          <div class="card-img" style="background-image:url(images/hair.png)"></div>
+          <div class="card-body">
+            <span class="tag">Волосы</span>
+            <h3>Окрашивание</h3>
+            <p class="meta">Анна Ли · 180 мин</p>
+            <p class="stars">★★★★★</p>
+            <p class="price">от 25 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card hair">
+          <div class="card-img" style="background-image:url(images/blowdry.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Волосы</span>
+            <h3>Укладка и локоны</h3>
+            <p class="meta">Дана Ким · 45 мин</p>
+            <p class="stars">★★★★☆</p>
+            <p class="price">от 6 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card hair">
+          <div class="card-img" style="background-image:url(images/barber2.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Волосы</span>
+            <h3>Мужская стрижка</h3>
+            <p class="meta">Ерлан Сеитов · 40 мин</p>
+            <p class="stars">★★★★★</p>
+            <p class="price">от 5 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card nails">
+          <div class="card-img" style="background-image:url(images/manicure.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Ногти</span>
+            <h3>Маникюр</h3>
+            <p class="meta">Мадина Ахметова · 60 мин</p>
+            <p class="stars">★★★★★</p>
+            <p class="price">от 7 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card nails">
+          <div class="card-img" style="background-image:url(images/hands.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Ногти</span>
+            <h3>Педикюр</h3>
+            <p class="meta">Мадина Ахметова · 75 мин</p>
+            <p class="stars">★★★★☆</p>
+            <p class="price">от 9 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card face">
+          <div class="card-img" style="background-image:url(images/facial.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Лицо</span>
+            <h3>Чистка лица</h3>
+            <p class="meta">Алия Нурлан · 60 мин</p>
+            <p class="stars">★★★★★</p>
+            <p class="price">от 12 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+        <article class="card face">
+          <div class="card-img" style="background-image:url(images/makeup.jpg)"></div>
+          <div class="card-body">
+            <span class="tag">Лицо</span>
+            <h3>Макияж</h3>
+            <p class="meta">Алия Нурлан · 50 мин</p>
+            <p class="stars">★★★★☆</p>
+            <p class="price">от 10 000 ₸</p>
+            <a href="details.html" class="btn btn-small">Подробнее</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="logo">Bloom<span>.</span></p>
+      <ul>
+        <li><a href="about.html">О нас</a></li>
+        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="#">Конфиденциальность</a></li>
+        <li><a href="#">Условия</a></li>
+      </ul>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Telegram</a></li>
+      </ul>
+      <small>© 2026 Bloom Beauty Salon. Student Project</small>
+    </div>
+  </footer>
+</body>
+</html>
