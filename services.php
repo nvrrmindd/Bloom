@@ -1,4 +1,26 @@
-<?php require __DIR__ . '/data.php'; ?>
+<?php
+require __DIR__ . '/data.php';
+
+// [категория, название, мастер, минут, рейтинг, цена, картинка]
+$services = [
+    ['hair',  'Женская стрижка', 'Анна Ли',         60,  5, 8000,  'images/styling.jpg'],
+    ['hair',  'Окрашивание',     'Анна Ли',         180, 5, 25000, 'images/hair.png'],
+    ['hair',  'Укладка и локоны', 'Дана Ким',       45,  4, 6000,  'images/blowdry.jpg'],
+    ['hair',  'Мужская стрижка', 'Ерлан Сеитов',    40,  5, 5000,  'images/barber2.jpg'],
+    ['nails', 'Маникюр',         'Мадина Ахметова', 60,  5, 7000,  'images/manicure.jpg'],
+    ['nails', 'Педикюр',         'Мадина Ахметова', 75,  4, 9000,  'images/hands.jpg'],
+    ['face',  'Чистка лица',     'Алия Нурлан',     60,  5, 12000, 'images/facial.jpg'],
+    ['face',  'Макияж',          'Алия Нурлан',     50,  4, 10000, 'images/makeup.jpg'],
+];
+$tags = ['hair' => 'Волосы', 'nails' => 'Ногти', 'face' => 'Лицо'];
+
+// поиск по названию услуги или имени мастера
+$q = trim((string) ($_GET['q'] ?? ''));
+if ($q !== '') {
+    $services = array_filter($services, fn(array $s): bool =>
+        mb_stripos($s[1], $q) !== false || mb_stripos($s[2], $q) !== false);
+}
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -24,7 +46,7 @@
   <main class="section">
     <div class="container">
       <form class="search-bar" action="services.php">
-        <input type="search" name="q" placeholder="Поиск услуги или мастера...">
+        <input type="search" name="q" value="<?= h($q) ?>" placeholder="Поиск услуги или мастера...">
         <button class="btn">Найти</button>
       </form>
 
@@ -40,95 +62,24 @@
         <label for="f-face">Лицо</label>
       </div>
 
+      <?php if (!$services): ?>
+      <p class="section-title">Ничего не найдено по запросу «<?= h($q) ?>»</p>
+      <?php endif; ?>
+
       <div class="grid">
-        <article class="card hair">
-          <div class="card-img" style="background-image:url(images/styling.jpg)"></div>
+<?php foreach ($services as [$cat, $name, $master, $min, $rating, $price, $img]): ?>
+        <article class="card <?= h($cat) ?>">
+          <div class="card-img" style="background-image:url(<?= h($img) ?>)"></div>
           <div class="card-body">
-            <span class="tag">Волосы</span>
-            <h3>Женская стрижка</h3>
-            <p class="meta">Анна Ли · 60 мин</p>
-            <p class="stars">★★★★★</p>
-            <p class="price">от 8 000 ₸</p>
+            <span class="tag"><?= h($tags[$cat]) ?></span>
+            <h3><?= h($name) ?></h3>
+            <p class="meta"><?= h($master) ?> · <?= $min ?> мин</p>
+            <p class="stars"><?= str_repeat('★', $rating) . str_repeat('☆', 5 - $rating) ?></p>
+            <p class="price">от <?= number_format($price, 0, '', ' ') ?> ₸</p>
             <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
-        <article class="card hair">
-          <div class="card-img" style="background-image:url(images/hair.png)"></div>
-          <div class="card-body">
-            <span class="tag">Волосы</span>
-            <h3>Окрашивание</h3>
-            <p class="meta">Анна Ли · 180 мин</p>
-            <p class="stars">★★★★★</p>
-            <p class="price">от 25 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card hair">
-          <div class="card-img" style="background-image:url(images/blowdry.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Волосы</span>
-            <h3>Укладка и локоны</h3>
-            <p class="meta">Дана Ким · 45 мин</p>
-            <p class="stars">★★★★☆</p>
-            <p class="price">от 6 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card hair">
-          <div class="card-img" style="background-image:url(images/barber2.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Волосы</span>
-            <h3>Мужская стрижка</h3>
-            <p class="meta">Ерлан Сеитов · 40 мин</p>
-            <p class="stars">★★★★★</p>
-            <p class="price">от 5 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card nails">
-          <div class="card-img" style="background-image:url(images/manicure.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Ногти</span>
-            <h3>Маникюр</h3>
-            <p class="meta">Мадина Ахметова · 60 мин</p>
-            <p class="stars">★★★★★</p>
-            <p class="price">от 7 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card nails">
-          <div class="card-img" style="background-image:url(images/hands.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Ногти</span>
-            <h3>Педикюр</h3>
-            <p class="meta">Мадина Ахметова · 75 мин</p>
-            <p class="stars">★★★★☆</p>
-            <p class="price">от 9 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card face">
-          <div class="card-img" style="background-image:url(images/facial.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Лицо</span>
-            <h3>Чистка лица</h3>
-            <p class="meta">Алия Нурлан · 60 мин</p>
-            <p class="stars">★★★★★</p>
-            <p class="price">от 12 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
-        <article class="card face">
-          <div class="card-img" style="background-image:url(images/makeup.jpg)"></div>
-          <div class="card-body">
-            <span class="tag">Лицо</span>
-            <h3>Макияж</h3>
-            <p class="meta">Алия Нурлан · 50 мин</p>
-            <p class="stars">★★★★☆</p>
-            <p class="price">от 10 000 ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
-          </div>
-        </article>
+<?php endforeach; ?>
       </div>
     </div>
   </main>
