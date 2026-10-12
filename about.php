@@ -1,10 +1,10 @@
-<?php require __DIR__ . '/data.php'; ?>
+<?php require 'data.php'; ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>О нас — Bloom Salon</title>
+  <title>About — Bloom Salon</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,44 +13,44 @@
       <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <?php require __DIR__ . "/nav.php"; ?>
+      <?php require 'nav.php'; ?>
     </div>
   </header>
 
   <section class="page-banner">
-    <h1 class="fade-up">О салоне Bloom</h1>
+    <h1>About the salon Bloom</h1>
   </section>
 
   <main class="section">
     <div class="container">
       <div class="details">
-        <div class="details-img fade-up" style="background-image:url(images/team.jpg)"></div>
-        <div class="fade-up delay-1">
-          <h2 class="section-title">Красота без суеты</h2>
-          <p>Bloom — салон красоты, где можно выбрать услугу, мастера и удобное время онлайн за пару минут.</p>
+        <div class="details-img" style="background-image:url(images/team.jpg)"></div>
+        <div>
+          <h2 class="section-title">Beauty without the fuss</h2>
+          <p>Bloom — a beauty salon where you can choose a service, a stylist and a convenient time online in a couple of minutes.</p>
           <ul>
-            <li>Опытные мастера с портфолио и рейтингом</li>
-            <li>Стрижки, окрашивание, маникюр, уход за лицом и макияж</li>
-            <li>Онлайн-запись и актуальное расписание</li>
+            <li>Experienced stylists with portfolio and rating</li>
+            <li>Haircuts, coloring, manicure, facials and makeup</li>
+            <li>Online booking and an up-to-date schedule</li>
           </ul>
-          <a href="services.php" class="btn">Выбрать услугу</a>
+          <a href="services.php" class="btn">Choose a service</a>
         </div>
       </div>
 
       <section id="contact" style="margin-top:70px">
-        <h2 class="section-title">Контакты</h2>
+        <h2 class="section-title">Contacts</h2>
         <div class="features">
           <div class="feature">
-            <h3>Адрес</h3>
-            <p>г. Астана, ул. Примерная, 1</p>
+            <h3>Address</h3>
+            <p>Astana, Primernaya St., 1</p>
           </div>
           <div class="feature">
-            <h3>Телефон</h3>
+            <h3>Phone</h3>
             <p>+7 777 000 00 00</p>
           </div>
           <div class="feature">
-            <h3>Часы работы</h3>
-            <p>Ежедневно с 10:00 до 20:00</p>
+            <h3>Opening hours</h3>
+            <p>Daily 10:00 – 20:00</p>
           </div>
         </div>
       </section>
@@ -61,10 +61,10 @@
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.php">О нас</a></li>
-        <li><a href="about.php#contact">Контакты</a></li>
-        <li><a href="#">Конфиденциальность</a></li>
-        <li><a href="#">Условия</a></li>
+        <li><a href="about.php">About</a></li>
+        <li><a href="about.php#contact">Contacts</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
       </ul>
       <ul>
         <li><a href="#">Instagram</a></li>

@@ -1,145 +1,142 @@
 <?php
-// Минимальное хранилище и вход: data/bookings.json, data/users.json (создаются при первом запуске)
+// Общие данные и функции для всех страниц.
+// Данные хранятся в JSON-файлах в папке data/ (создаются при первом запуске).
 
 session_start();
 
-const BOOKINGS_FILE = __DIR__ . '/data/bookings.json';
-const USERS_FILE    = __DIR__ . '/data/users.json';
-const SERVICES_FILE = __DIR__ . '/data/services.json';
-const CATEGORIES    = ['hair' => 'Волосы', 'nails' => 'Ногти', 'face' => 'Лицо'];
-const SERVICES      = ['Женская стрижка', 'Окрашивание', 'Маникюр', 'Чистка лица'];
-const MASTERS       = ['Анна Ли', 'Дана Ким', 'Мадина Ахметова', 'Алия Нурлан'];
-const SLOTS         = ['10:00', '12:00', '14:00', '16:00', '18:00'];
-const STATUSES      = ['pending' => 'Ожидает', 'confirmed' => 'Подтверждена', 'cancelled' => 'Отменена'];
+$CATEGORIES = ['hair' => 'Hair', 'nails' => 'Nails', 'face' => 'Face'];
+$MASTERS    = ['Anna Lee', 'Dana Kim', 'Yerlan Seitov', 'Madina Akhmetova', 'Aliya Nurlan'];
+$SLOTS      = ['10:00', '12:00', '14:00', '16:00', '18:00'];
+$STATUSES   = ['pending' => 'Pending', 'confirmed' => 'Confirmed', 'cancelled' => 'Cancelled'];
 
-function h($s): string
+// защита от HTML в тексте, который ввёл пользователь
+function h($text)
 {
-    return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($text);
 }
 
-/* ---------- файлы ---------- */
-
-function read_json(string $file, callable $seed): array
+// прочитать файл; если его нет — создать с данными по умолчанию
+function read_json($file, $default)
 {
-    if (!is_file($file)) {
-        write_json($file, $seed());
+    if (!file_exists($file)) {
+        write_json($file, $default);
     }
-    return json_decode((string) file_get_contents($file), true) ?: [];
+    return json_decode(file_get_contents($file), true);
 }
 
-function write_json(string $file, array $rows): void
+function write_json($file, $data)
 {
-    if (!is_dir(dirname($file))) {
-        mkdir(dirname($file), 0775, true);
+    if (!is_dir(__DIR__ . '/data')) {
+        mkdir(__DIR__ . '/data');
     }
-    file_put_contents($file, json_encode(array_values($rows), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
+    file_put_contents($file, json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-function load_bookings(): array
+/* ---------- услуги ---------- */
+
+function load_services()
 {
-    return read_json(BOOKINGS_FILE, fn() => [
-        ['id' => 10211, 'client' => 'Айгерим С.', 'service' => 'Чистка лица',     'master' => 'Алия Нурлан',     'date' => '2026-09-18', 'time' => '16:00', 'phone' => '', 'note' => '', 'status' => 'cancelled'],
-        ['id' => 10398, 'client' => 'Айгерим С.', 'service' => 'Маникюр',         'master' => 'Мадина Ахметова', 'date' => '2026-10-02', 'time' => '12:00', 'phone' => '', 'note' => '', 'status' => 'confirmed'],
-        ['id' => 10451, 'client' => 'Тимур А.',   'service' => 'Мужская стрижка', 'master' => 'Ерлан Сеитов',    'date' => '2026-10-15', 'time' => '10:00', 'phone' => '', 'note' => '', 'status' => 'confirmed'],
-        ['id' => 10452, 'client' => 'Айгерим С.', 'service' => 'Женская стрижка', 'master' => 'Анна Ли',         'date' => '2026-10-15', 'time' => '14:00', 'phone' => '', 'note' => '', 'status' => 'pending'],
+    return read_json(__DIR__ . '/data/services.json', [
+        ['cat' => 'hair',  'name' => "Women's haircut",  'master' => 'Anna Lee',         'min' => 60,  'rating' => 5, 'price' => 8000,  'img' => 'images/styling.jpg'],
+        ['cat' => 'hair',  'name' => 'Coloring',         'master' => 'Anna Lee',         'min' => 180, 'rating' => 5, 'price' => 25000, 'img' => 'images/hair.png'],
+        ['cat' => 'hair',  'name' => 'Styling & curls',  'master' => 'Dana Kim',         'min' => 45,  'rating' => 4, 'price' => 6000,  'img' => 'images/blowdry.jpg'],
+        ['cat' => 'hair',  'name' => "Men's haircut",    'master' => 'Yerlan Seitov',    'min' => 40,  'rating' => 5, 'price' => 5000,  'img' => 'images/barber2.jpg'],
+        ['cat' => 'nails', 'name' => 'Manicure',         'master' => 'Madina Akhmetova', 'min' => 60,  'rating' => 5, 'price' => 7000,  'img' => 'images/manicure.jpg'],
+        ['cat' => 'nails', 'name' => 'Pedicure',         'master' => 'Madina Akhmetova', 'min' => 75,  'rating' => 4, 'price' => 9000,  'img' => 'images/hands.jpg'],
+        ['cat' => 'face',  'name' => 'Facial cleansing', 'master' => 'Aliya Nurlan',     'min' => 60,  'rating' => 5, 'price' => 12000, 'img' => 'images/facial.jpg'],
+        ['cat' => 'face',  'name' => 'Makeup',           'master' => 'Aliya Nurlan',     'min' => 50,  'rating' => 4, 'price' => 10000, 'img' => 'images/makeup.jpg'],
     ]);
 }
 
-function save_bookings(array $rows): void
+function save_services($services)
 {
-    write_json(BOOKINGS_FILE, $rows);
+    write_json(__DIR__ . '/data/services.json', $services);
 }
 
-// услуга: [категория, название, мастер, минут, рейтинг, цена, картинка]
-function load_services(): array
+/* ---------- записи ---------- */
+
+function load_bookings()
 {
-    return read_json(SERVICES_FILE, fn() => [
-        ['hair',  'Женская стрижка',  'Анна Ли',         60,  5, 8000,  'images/styling.jpg'],
-        ['hair',  'Окрашивание',      'Анна Ли',         180, 5, 25000, 'images/hair.png'],
-        ['hair',  'Укладка и локоны', 'Дана Ким',        45,  4, 6000,  'images/blowdry.jpg'],
-        ['hair',  'Мужская стрижка',  'Ерлан Сеитов',    40,  5, 5000,  'images/barber2.jpg'],
-        ['nails', 'Маникюр',          'Мадина Ахметова', 60,  5, 7000,  'images/manicure.jpg'],
-        ['nails', 'Педикюр',          'Мадина Ахметова', 75,  4, 9000,  'images/hands.jpg'],
-        ['face',  'Чистка лица',      'Алия Нурлан',     60,  5, 12000, 'images/facial.jpg'],
-        ['face',  'Макияж',           'Алия Нурлан',     50,  4, 10000, 'images/makeup.jpg'],
+    return read_json(__DIR__ . '/data/bookings.json', [
+        ['id' => 10211, 'client' => 'Aigerim S.', 'service' => 'Facial cleansing', 'master' => 'Aliya Nurlan',     'date' => '2026-09-18', 'time' => '16:00', 'phone' => '', 'note' => '', 'status' => 'cancelled'],
+        ['id' => 10398, 'client' => 'Aigerim S.', 'service' => 'Manicure',         'master' => 'Madina Akhmetova', 'date' => '2026-10-02', 'time' => '12:00', 'phone' => '', 'note' => '', 'status' => 'confirmed'],
+        ['id' => 10451, 'client' => 'Timur A.',   'service' => "Men's haircut",    'master' => 'Yerlan Seitov',    'date' => '2026-10-15', 'time' => '10:00', 'phone' => '', 'note' => '', 'status' => 'confirmed'],
+        ['id' => 10452, 'client' => 'Aigerim S.', 'service' => "Women's haircut",  'master' => 'Anna Lee',         'date' => '2026-10-15', 'time' => '14:00', 'phone' => '', 'note' => '', 'status' => 'pending'],
     ]);
 }
 
-function save_services(array $rows): void
+function save_bookings($bookings)
 {
-    write_json(SERVICES_FILE, $rows);
+    write_json(__DIR__ . '/data/bookings.json', $bookings);
 }
 
-function load_users(): array
+/* ---------- пользователи ---------- */
+
+// демо-аккаунты: клиенты — bloom123, админ — admin123 (пароли хранятся в виде хеша)
+function load_users()
 {
-    // демо-аккаунты: клиенты — bloom123, админ — admin123
-    return read_json(USERS_FILE, function (): array {
-        $hash = password_hash('bloom123', PASSWORD_DEFAULT);
-        $adminHash = password_hash('admin123', PASSWORD_DEFAULT);
-        return [
-            ['id' => 1, 'first' => 'Айгерим', 'last' => 'Садыкова', 'email' => 'aigerim@email.com', 'phone' => '+7 777 555 11 22', 'dob' => '2002-04-12', 'password' => $hash, 'role' => 'client'],
-            ['id' => 2, 'first' => 'Тимур',   'last' => 'Ахметов',  'email' => 'timur@email.com',   'phone' => '+7 777 555 33 44', 'dob' => '',           'password' => $hash, 'role' => 'client'],
-            ['id' => 3, 'first' => 'Admin',   'last' => '',         'email' => 'admin@bloom.kz',    'phone' => '',                 'dob' => '',           'password' => $adminHash, 'role' => 'admin'],
-        ];
-    });
+    $client = '$2y$12$JBV1GMrEtPbyuhJpkuX8cOPQ1eDMc9ATbgUcvyPi67Ryb.DmQT39e';
+    $admin  = '$2y$12$uTJiqo1N0M1ghYjMf4igT.NY6aQyT7ZwKi0r8JNa.vkIqiqTS6I9u';
+    return read_json(__DIR__ . '/data/users.json', [
+        ['id' => 1, 'first' => 'Aigerim', 'last' => 'Sadykova', 'email' => 'aigerim@email.com', 'phone' => '+7 777 555 11 22', 'dob' => '2002-04-12', 'password' => $client, 'role' => 'client'],
+        ['id' => 2, 'first' => 'Timur',   'last' => 'Akhmetov', 'email' => 'timur@email.com',   'phone' => '+7 777 555 33 44', 'dob' => '',           'password' => $client, 'role' => 'client'],
+        ['id' => 3, 'first' => 'Admin',   'last' => '',         'email' => 'admin@bloom.kz',    'phone' => '',                 'dob' => '',           'password' => $admin,  'role' => 'admin'],
+    ]);
+}
+
+function save_users($users)
+{
+    write_json(__DIR__ . '/data/users.json', $users);
 }
 
 /* ---------- вход ---------- */
 
-function current_user(): ?array
+// пользователь, который сейчас вошёл, или null
+function current_user()
 {
-    if (!isset($_SESSION['uid'])) {
+    if (!isset($_SESSION['user_id'])) {
         return null;
     }
-    foreach (load_users() as $u) {
-        if ($u['id'] === $_SESSION['uid']) {
-            return $u;
+    foreach (load_users() as $user) {
+        if ($user['id'] == $_SESSION['user_id']) {
+            return $user;
         }
     }
     return null;
 }
 
-function full_name(array $u): string
+function full_name($user)
 {
-    return trim($u['first'] . ' ' . $u['last']);
+    return trim($user['first'] . ' ' . $user['last']);
 }
 
-/** «Айгерим Садыкова» → «Айгерим С.» — так клиент подписан в записях. */
-function client_name(array $u): string
+// "Aigerim Sadykova" -> "Aigerim S." — так клиент подписан в записях
+function client_name($user)
 {
-    return $u['last'] === '' ? $u['first'] : $u['first'] . ' ' . mb_substr($u['last'], 0, 1) . '.';
+    if ($user['last'] == '') {
+        return $user['first'];
+    }
+    return $user['first'] . ' ' . mb_substr($user['last'], 0, 1) . '.';
 }
 
-function require_login(): array
+// страница только для вошедших
+function require_login()
 {
-    $u = current_user();
-    if ($u === null) {
-        $self = basename($_SERVER['SCRIPT_NAME']) . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '');
-        header('Location: login.php?next=' . urlencode($self));
+    $user = current_user();
+    if ($user == null) {
+        header('Location: login.php');
         exit;
     }
-    return $u;
+    return $user;
 }
 
-function require_admin(): array
+// страница только для админа
+function require_admin()
 {
-    $u = require_login();
-    if ($u['role'] !== 'admin') {
-        http_response_code(403);
-        exit('Доступ запрещён');
+    $user = require_login();
+    if ($user['role'] != 'admin') {
+        echo 'Access denied';
+        exit;
     }
-    return $u;
-}
-
-/* ---------- CSRF для POST-форм ---------- */
-
-function csrf_field(): string
-{
-    $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
-    return '<input type="hidden" name="csrf" value="' . h($_SESSION['csrf']) . '">';
-}
-
-function csrf_ok(): bool
-{
-    return isset($_SESSION['csrf'], $_POST['csrf']) && hash_equals($_SESSION['csrf'], (string) $_POST['csrf']);
+    return $user;
 }

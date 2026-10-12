@@ -1,17 +1,22 @@
 <?php
-require __DIR__ . '/data.php';
+require 'data.php';
 
 $me = require_login();
 
-$mine = array_filter(load_bookings(), fn(array $r): bool => $r['client'] === client_name($me));
-usort($mine, fn(array $a, array $b): int => [$b['date'], $b['time']] <=> [$a['date'], $a['time']]);
+// записи этого клиента
+$mine = [];
+foreach (load_bookings() as $b) {
+    if ($b['client'] == client_name($me)) {
+        $mine[] = $b;
+    }
+}
 ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Профиль — Bloom Salon</title>
+  <title>Profile — Bloom Salon</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,56 +25,56 @@ usort($mine, fn(array $a, array $b): int => [$b['date'], $b['time']] <=> [$a['da
       <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <?php require __DIR__ . "/nav.php"; ?>
+      <?php require 'nav.php'; ?>
     </div>
   </header>
 
   <main class="section">
     <div class="container profile">
-      <aside class="profile-card fade-up">
+      <aside class="profile-card">
         <div class="avatar" style="background-image:url(images/nails.jpg)"></div>
         <h2><?= h(full_name($me)) ?></h2>
         <p><?= h($me['email']) ?></p>
-<?php if ($me['phone'] !== ''): ?>
+<?php if ($me['phone'] != ''): ?>
         <p><?= h($me['phone']) ?></p>
 <?php endif; ?>
-<?php if ($me['dob'] !== ''): ?>
-        <p>Дата рождения: <?= h(date('d.m.Y', strtotime($me['dob']))) ?></p>
+<?php if ($me['dob'] != ''): ?>
+        <p>Date of birth: <?= h(date('d.m.Y', strtotime($me['dob']))) ?></p>
 <?php endif; ?>
-        <a href="logout.php" class="btn btn-small">Выйти</a>
+        <a href="logout.php" class="btn btn-small">Log out</a>
       </aside>
 
-      <div class="fade-up delay-1">
-        <h2 class="title">Мои записи</h2>
+      <div>
+        <h2 class="title">My bookings</h2>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>№</th><th>Услуга</th><th>Мастер</th><th>Дата</th><th>Статус</th></tr>
+              <tr><th>№</th><th>Service</th><th>Stylist</th><th>Date</th><th>Status</th></tr>
             </thead>
             <tbody>
 <?php foreach ($mine as $r): ?>
-              <tr><td>#<?= (int) $r['id'] ?></td><td><?= h($r['service']) ?></td><td><?= h($r['master']) ?></td><td><?= h(date('d.m.Y', strtotime($r['date'])) . ' ' . $r['time']) ?></td><td><span class="status <?= h($r['status']) ?>"><?= h(STATUSES[$r['status']] ?? $r['status']) ?></span></td></tr>
+              <tr><td>#<?= $r['id'] ?></td><td><?= h($r['service']) ?></td><td><?= h($r['master']) ?></td><td><?= h(date('d.m.Y', strtotime($r['date'])) . ' ' . $r['time']) ?></td><td><span class="status <?= h($r['status']) ?>"><?= h($STATUSES[$r['status']]) ?></span></td></tr>
 <?php endforeach; ?>
 <?php if (!$mine): ?>
-              <tr><td colspan="5">Записей пока нет. <a href="booking.php">Записаться</a></td></tr>
+              <tr><td colspan="5">No bookings yet. <a href="booking.php">Book now</a></td></tr>
 <?php endif; ?>
             </tbody>
           </table>
         </div>
 
         <details class="edit">
-          <summary>Редактировать профиль</summary>
+          <summary>Edit profile</summary>
           <form action="profile.php">
             <div class="row">
-              <div class="field"><label for="fn">Имя</label><input id="fn" value="<?= h($me['first']) ?>" required></div>
-              <div class="field"><label for="ln">Фамилия</label><input id="ln" value="<?= h($me['last']) ?>" required></div>
+              <div class="field"><label for="fn">First name</label><input id="fn" value="<?= h($me['first']) ?>" required></div>
+              <div class="field"><label for="ln">Last name</label><input id="ln" value="<?= h($me['last']) ?>" required></div>
             </div>
             <div class="field">
               <label for="em">Email</label>
               <input type="email" id="em" value="<?= h($me['email']) ?>" placeholder="you@email.com" required>
-              <span class="error">Введите корректный email</span>
+              <span class="error">Enter a valid email</span>
             </div>
-            <button class="btn">Сохранить</button>
+            <button class="btn">Save</button>
           </form>
         </details>
       </div>
@@ -80,10 +85,10 @@ usort($mine, fn(array $a, array $b): int => [$b['date'], $b['time']] <=> [$a['da
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.php">О нас</a></li>
-        <li><a href="about.php#contact">Контакты</a></li>
-        <li><a href="#">Конфиденциальность</a></li>
-        <li><a href="#">Условия</a></li>
+        <li><a href="about.php">About</a></li>
+        <li><a href="about.php#contact">Contacts</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
       </ul>
       <ul>
         <li><a href="#">Instagram</a></li>

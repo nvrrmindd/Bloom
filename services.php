@@ -1,22 +1,29 @@
 <?php
-require __DIR__ . '/data.php';
+require 'data.php';
 
 $services = load_services();
-$tags = CATEGORIES;
 
 // поиск по названию услуги или имени мастера
-$q = trim((string) ($_GET['q'] ?? ''));
-if ($q !== '') {
-    $services = array_filter($services, fn(array $s): bool =>
-        mb_stripos($s[1], $q) !== false || mb_stripos($s[2], $q) !== false);
+$q = '';
+if (isset($_GET['q'])) {
+    $q = trim($_GET['q']);
+}
+if ($q != '') {
+    $found = [];
+    foreach ($services as $s) {
+        if (stripos($s['name'], $q) !== false || stripos($s['master'], $q) !== false) {
+            $found[] = $s;
+        }
+    }
+    $services = $found;
 }
 ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Услуги — Bloom Salon</title>
+  <title>Services — Bloom Salon</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -25,19 +32,19 @@ if ($q !== '') {
       <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <?php require __DIR__ . "/nav.php"; ?>
+      <?php require 'nav.php'; ?>
     </div>
   </header>
 
   <section class="page-banner">
-    <h1 class="fade-up">Наши услуги</h1>
+    <h1>Our services</h1>
   </section>
 
   <main class="section">
     <div class="container">
       <form class="search-bar" action="services.php">
-        <input type="search" name="q" value="<?= h($q) ?>" placeholder="Поиск услуги или мастера...">
-        <button class="btn">Найти</button>
+        <input type="search" name="q" value="<?= h($q) ?>" placeholder="Search a service or stylist...">
+        <button class="btn">Search</button>
       </form>
 
       <!-- фильтр по категориям на чистом CSS (radio + :checked) -->
@@ -46,27 +53,27 @@ if ($q !== '') {
       <input type="radio" name="cat" id="f-nails" class="filter-radio">
       <input type="radio" name="cat" id="f-face" class="filter-radio">
       <div class="filters">
-        <label for="f-all">Все</label>
-        <label for="f-hair">Волосы</label>
-        <label for="f-nails">Ногти</label>
-        <label for="f-face">Лицо</label>
+        <label for="f-all">All</label>
+        <label for="f-hair">Hair</label>
+        <label for="f-nails">Nails</label>
+        <label for="f-face">Face</label>
       </div>
 
       <?php if (!$services): ?>
-      <p class="section-title">Ничего не найдено по запросу «<?= h($q) ?>»</p>
+      <p class="section-title">Nothing found for «<?= h($q) ?>»</p>
       <?php endif; ?>
 
       <div class="grid">
-<?php foreach ($services as [$cat, $name, $master, $min, $rating, $price, $img]): ?>
-        <article class="card <?= h($cat) ?>">
-          <div class="card-img" style="background-image:url(<?= h($img) ?>)"></div>
+<?php foreach ($services as $s): ?>
+        <article class="card <?= $s['cat'] ?>">
+          <div class="card-img" style="background-image:url(<?= $s['img'] ?>)"></div>
           <div class="card-body">
-            <span class="tag"><?= h($tags[$cat]) ?></span>
-            <h3><?= h($name) ?></h3>
-            <p class="meta"><?= h($master) ?> · <?= $min ?> мин</p>
-            <p class="stars"><?= str_repeat('★', $rating) . str_repeat('☆', 5 - $rating) ?></p>
-            <p class="price">от <?= number_format($price, 0, '', ' ') ?> ₸</p>
-            <a href="details.php" class="btn btn-small">Подробнее</a>
+            <span class="tag"><?= $CATEGORIES[$s['cat']] ?></span>
+            <h3><?= h($s['name']) ?></h3>
+            <p class="meta"><?= h($s['master']) ?> · <?= $s['min'] ?> min</p>
+            <p class="stars"><?= str_repeat('★', $s['rating']) . str_repeat('☆', 5 - $s['rating']) ?></p>
+            <p class="price">from <?= $s['price'] ?> ₸</p>
+            <a href="details.php" class="btn btn-small">Details</a>
           </div>
         </article>
 <?php endforeach; ?>
@@ -78,10 +85,10 @@ if ($q !== '') {
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.php">О нас</a></li>
-        <li><a href="about.php#contact">Контакты</a></li>
-        <li><a href="#">Конфиденциальность</a></li>
-        <li><a href="#">Условия</a></li>
+        <li><a href="about.php">About</a></li>
+        <li><a href="about.php#contact">Contacts</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
       </ul>
       <ul>
         <li><a href="#">Instagram</a></li>

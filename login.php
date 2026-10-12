@@ -1,44 +1,45 @@
 <?php
-require __DIR__ . '/data.php';
+require 'data.php';
 
 if (current_user()) {
     header('Location: index.php');
     exit;
 }
 
-// после входа возвращаем на страницу, с которой пришли (только локальные .php)
-$next = (string) ($_GET['next'] ?? $_POST['next'] ?? '');
-if (!preg_match('/^[a-z]+\.php(\?[\w=&%.-]*)?$/i', $next)) {
-    $next = '';
-}
 $email = '';
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim((string) ($_POST['email'] ?? ''));
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email    = trim($_POST['email']);
+    $password = $_POST['password'];
+
+    // ищем пользователя по email
     $found = null;
-    foreach (load_users() as $u) {
-        if (mb_strtolower($u['email']) === mb_strtolower($email)) {
-            $found = $u;
+    foreach (load_users() as $user) {
+        if (strtolower($user['email']) == strtolower($email)) {
+            $found = $user;
         }
     }
 
-    if (!csrf_ok() || $found === null || !password_verify((string) ($_POST['password'] ?? ''), $found['password'])) {
-        $error = 'Неверный email или пароль.';
+    if ($found == null || !password_verify($password, $found['password'])) {
+        $error = 'Invalid email or password.';
     } else {
-        session_regenerate_id(true);
-        $_SESSION['uid'] = $found['id'];
-        header('Location: ' . ($next !== '' ? $next : ($found['role'] === 'admin' ? 'admin.php' : 'index.php')));
+        $_SESSION['user_id'] = $found['id'];
+        if ($found['role'] == 'admin') {
+            header('Location: admin.php');
+        } else {
+            header('Location: index.php');
+        }
         exit;
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вход — Bloom Salon</title>
+  <title>Log in — Bloom Salon</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -50,27 +51,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <main class="form-page">
     <form class="form-box" action="login.php" method="post">
-      <h1>Вход</h1>
+      <h1>Log in</h1>
       <?php if (isset($_GET['registered'])): ?>
-      <p style="color:#2e7d4a;margin-bottom:14px">Аккаунт создан. Теперь можно войти.</p>
+      <p style="color:#2e7d4a;margin-bottom:14px">Account created. You can log in now.</p>
       <?php endif; ?>
       <?php if ($error): ?>
       <p class="error" style="display:block;margin-bottom:14px"><?= h($error) ?></p>
       <?php endif; ?>
-      <?= csrf_field() ?>
-      <input type="hidden" name="next" value="<?= h($next) ?>">
       <div class="field">
         <label for="email">Email *</label>
         <input type="email" id="email" name="email" value="<?= h($email) ?>" placeholder="you@email.com" required>
-        <span class="error">Введите корректный email</span>
+        <span class="error">Enter a valid email</span>
       </div>
       <div class="field">
-        <label for="password">Пароль *</label>
+        <label for="password">Password *</label>
         <input type="password" id="password" name="password" placeholder="••••••••" minlength="6" required>
-        <span class="error">Пароль — минимум 6 символов</span>
+        <span class="error">Password must be at least 6 characters</span>
       </div>
-      <button class="btn">Войти</button>
-      <p class="bottom">Нет аккаунта? <a href="register.php">Зарегистрироваться</a></p>
+      <button class="btn">Log in</button>
+      <p class="bottom">No account? <a href="register.php">Sign up</a></p>
     </form>
   </main>
 </body>

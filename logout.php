@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/data.php';
+require 'data.php';
 
 $_SESSION = [];
 session_destroy();

@@ -1,46 +1,62 @@
 <?php
-require __DIR__ . '/data.php';
+require 'data.php';
 
 $me = require_login();
 
-$v = ['service' => 'Женская стрижка', 'master' => '', 'date' => '', 'time' => '', 'phone' => $me['phone'], 'note' => ''];
+// названия услуг для выпадающего списка
+$serviceNames = [];
+foreach (load_services() as $s) {
+    $serviceNames[] = $s['name'];
+}
+
+$v = ['service' => '', 'master' => '', 'date' => '', 'time' => '', 'phone' => $me['phone'], 'note' => ''];
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    foreach ($v as $key => $_) {
-        $v[$key] = trim((string) ($_POST[$key] ?? ''));
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    foreach ($v as $key => $value) {
+        $v[$key] = trim($_POST[$key]);
     }
-    $rows = load_bookings();
+    $bookings = load_bookings();
 
-    $dateOk = sscanf($v['date'], '%d-%d-%d', $y, $m, $d) === 3 && checkdate($m, $d, $y) && $v['date'] >= date('Y-m-d');
+    // занято ли это время у мастера
     $busy = false;
-    foreach ($rows as $r) {
-        if ($r['master'] === $v['master'] && $r['date'] === $v['date'] && $r['time'] === $v['time'] && $r['status'] !== 'cancelled') {
+    foreach ($bookings as $b) {
+        if ($b['master'] == $v['master'] && $b['date'] == $v['date'] && $b['time'] == $v['time'] && $b['status'] != 'cancelled') {
             $busy = true;
         }
     }
 
-    if (!csrf_ok() || !in_array($v['service'], SERVICES, true) || !in_array($v['master'], MASTERS, true)
-        || !in_array($v['time'], SLOTS, true) || !$dateOk
-        || !preg_match('/^\+?[0-9 ]{10,16}$/', $v['phone'])) {
-        $error = 'Проверьте, что все поля заполнены верно.';
+    if ($v['service'] == '' || $v['master'] == '' || $v['date'] == '' || $v['time'] == '' || $v['phone'] == '') {
+        $error = 'Please fill in all fields.';
+    } elseif ($v['date'] < date('Y-m-d')) {
+        $error = 'You cannot book a date in the past.';
     } elseif ($busy) {
-        $error = 'Это время у мастера уже занято — выберите другое.';
+        $error = 'This stylist is already booked at that time — choose another slot.';
     } else {
-        $id = $rows ? max(array_column($rows, 'id')) + 1 : 10001;
-        $rows[] = ['id' => $id, 'client' => client_name($me)] + $v + ['status' => 'pending'];
-        save_bookings($rows);
+        $id = $bookings[count($bookings) - 1]['id'] + 1;
+        $bookings[] = [
+            'id'      => $id,
+            'client'  => client_name($me),
+            'service' => $v['service'],
+            'master'  => $v['master'],
+            'date'    => $v['date'],
+            'time'    => $v['time'],
+            'phone'   => $v['phone'],
+            'note'    => $v['note'],
+            'status'  => 'pending',
+        ];
+        save_bookings($bookings);
         header('Location: confirm.php?id=' . $id);
         exit;
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Запись — Bloom Salon</title>
+  <title>Booking — Bloom Salon</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -49,58 +65,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <?php require __DIR__ . "/nav.php"; ?>
+      <?php require 'nav.php'; ?>
     </div>
   </header>
 
   <main class="form-page">
     <form class="form-box" action="booking.php" method="post">
-      <h1>Запись в салон</h1>
+      <h1>Book a visit</h1>
       <?php if ($error): ?>
       <p class="error" style="display:block;margin-bottom:14px"><?= h($error) ?></p>
       <?php endif; ?>
-      <?= csrf_field() ?>
       <div class="field">
-        <label for="service">Услуга</label>
+        <label for="service">Service</label>
         <select id="service" name="service" required>
-          <?php foreach (SERVICES as $s): ?>
-          <option<?= $v['service'] === $s ? ' selected' : '' ?>><?= h($s) ?></option>
+          <?php foreach ($serviceNames as $s): ?>
+          <option<?= $v['service'] == $s ? ' selected' : '' ?>><?= h($s) ?></option>
           <?php endforeach; ?>
         </select>
       </div>
       <div class="field">
-        <label for="master">Мастер</label>
+        <label for="master">Stylist</label>
         <select id="master" name="master" required>
-          <?php foreach (MASTERS as $m): ?>
-          <option<?= $v['master'] === $m ? ' selected' : '' ?>><?= h($m) ?></option>
+          <?php foreach ($MASTERS as $m): ?>
+          <option<?= $v['master'] == $m ? ' selected' : '' ?>><?= h($m) ?></option>
           <?php endforeach; ?>
         </select>
       </div>
       <div class="row">
         <div class="field">
-          <label for="date">Дата</label>
+          <label for="date">Date</label>
           <input type="date" id="date" name="date" value="<?= h($v['date']) ?>" min="<?= date('Y-m-d') ?>" required>
         </div>
         <div class="field">
-          <label for="time">Время</label>
+          <label for="time">Time</label>
           <select id="time" name="time" required>
             <option value="">—</option>
-            <?php foreach (SLOTS as $t): ?>
-            <option<?= $v['time'] === $t ? ' selected' : '' ?>><?= $t ?></option>
+            <?php foreach ($SLOTS as $t): ?>
+            <option<?= $v['time'] == $t ? ' selected' : '' ?>><?= $t ?></option>
             <?php endforeach; ?>
           </select>
         </div>
       </div>
       <div class="field">
-        <label for="phone">Телефон</label>
+        <label for="phone">Phone</label>
         <input type="tel" id="phone" name="phone" value="<?= h($v['phone']) ?>" placeholder="+7 777 123 45 67" pattern="\+?[0-9 ]{10,16}" required>
-        <span class="error">Введите корректный номер телефона</span>
+        <span class="error">Enter a valid phone number</span>
       </div>
       <div class="field">
-        <label for="note">Пожелания</label>
+        <label for="note">Notes</label>
         <textarea id="note" name="note" rows="3"><?= h($v['note']) ?></textarea>
       </div>
-      <button class="btn">Подтвердить</button>
+      <button class="btn">Confirm</button>
     </form>
   </main>
 </body>
