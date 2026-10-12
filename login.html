@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Bloom Salon</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">Bloom<span>.</span></a>
+    </div>
+  </header>
+
+  <main class="form-page">
+    <form class="form-box" action="index.html">
+      <h1>Вход</h1>
+      <div class="field">
+        <label for="email">Email *</label>
+        <input type="email" id="email" placeholder="you@email.com" required>
+        <span class="error">Введите корректный email</span>
+      </div>
+      <div class="field">
+        <label for="password">Пароль *</label>
+        <input type="password" id="password" placeholder="••••••••" minlength="6" required>
+        <span class="error">Пароль — минимум 6 символов</span>
+      </div>
+      <button class="btn">Войти</button>
+      <p class="bottom">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+    </form>
+  </main>
+</body>
+</html>
