@@ -28,13 +28,11 @@ php -S localhost:8000
 
 ## Демо-аккаунты
 
-Пароль у всех: `bloom123`
-
-| Email | Роль |
-|---|---|
-| `aigerim@email.com` | клиент |
-| `timur@email.com` | клиент |
-| `admin@bloom.kz` | администратор |
+| Email | Пароль | Роль |
+|---|---|---|
+| `aigerim@email.com` | `bloom123` | клиент |
+| `timur@email.com` | `bloom123` | клиент |
+| `admin@bloom.kz` | `admin123` | администратор |
 
 ## Структура
 

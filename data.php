@@ -50,13 +50,14 @@ function save_bookings(array $rows): void
 
 function load_users(): array
 {
-    // демо-аккаунты, пароль у всех: bloom123
+    // демо-аккаунты: клиенты — bloom123, админ — admin123
     return read_json(USERS_FILE, function (): array {
         $hash = password_hash('bloom123', PASSWORD_DEFAULT);
+        $adminHash = password_hash('admin123', PASSWORD_DEFAULT);
         return [
             ['id' => 1, 'first' => 'Айгерим', 'last' => 'Садыкова', 'email' => 'aigerim@email.com', 'phone' => '+7 777 555 11 22', 'dob' => '2002-04-12', 'password' => $hash, 'role' => 'client'],
             ['id' => 2, 'first' => 'Тимур',   'last' => 'Ахметов',  'email' => 'timur@email.com',   'phone' => '+7 777 555 33 44', 'dob' => '',           'password' => $hash, 'role' => 'client'],
-            ['id' => 3, 'first' => 'Admin',   'last' => '',         'email' => 'admin@bloom.kz',    'phone' => '',                 'dob' => '',           'password' => $hash, 'role' => 'admin'],
+            ['id' => 3, 'first' => 'Admin',   'last' => '',         'email' => 'admin@bloom.kz',    'phone' => '',                 'dob' => '',           'password' => $adminHash, 'role' => 'admin'],
         ];
     });
 }
