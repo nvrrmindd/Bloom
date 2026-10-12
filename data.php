@@ -5,6 +5,8 @@ session_start();
 
 const BOOKINGS_FILE = __DIR__ . '/data/bookings.json';
 const USERS_FILE    = __DIR__ . '/data/users.json';
+const SERVICES_FILE = __DIR__ . '/data/services.json';
+const CATEGORIES    = ['hair' => 'Волосы', 'nails' => 'Ногти', 'face' => 'Лицо'];
 const SERVICES      = ['Женская стрижка', 'Окрашивание', 'Маникюр', 'Чистка лица'];
 const MASTERS       = ['Анна Ли', 'Дана Ким', 'Мадина Ахметова', 'Алия Нурлан'];
 const SLOTS         = ['10:00', '12:00', '14:00', '16:00', '18:00'];
@@ -46,6 +48,26 @@ function load_bookings(): array
 function save_bookings(array $rows): void
 {
     write_json(BOOKINGS_FILE, $rows);
+}
+
+// услуга: [категория, название, мастер, минут, рейтинг, цена, картинка]
+function load_services(): array
+{
+    return read_json(SERVICES_FILE, fn() => [
+        ['hair',  'Женская стрижка',  'Анна Ли',         60,  5, 8000,  'images/styling.jpg'],
+        ['hair',  'Окрашивание',      'Анна Ли',         180, 5, 25000, 'images/hair.png'],
+        ['hair',  'Укладка и локоны', 'Дана Ким',        45,  4, 6000,  'images/blowdry.jpg'],
+        ['hair',  'Мужская стрижка',  'Ерлан Сеитов',    40,  5, 5000,  'images/barber2.jpg'],
+        ['nails', 'Маникюр',          'Мадина Ахметова', 60,  5, 7000,  'images/manicure.jpg'],
+        ['nails', 'Педикюр',          'Мадина Ахметова', 75,  4, 9000,  'images/hands.jpg'],
+        ['face',  'Чистка лица',      'Алия Нурлан',     60,  5, 12000, 'images/facial.jpg'],
+        ['face',  'Макияж',           'Алия Нурлан',     50,  4, 10000, 'images/makeup.jpg'],
+    ]);
+}
+
+function save_services(array $rows): void
+{
+    write_json(SERVICES_FILE, $rows);
 }
 
 function load_users(): array
