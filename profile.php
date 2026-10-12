@@ -1,3 +1,9 @@
+<?php
+require __DIR__ . '/data.php';
+
+$mine = array_filter(load_bookings(), fn(array $r): bool => $r['client'] === DEMO_CLIENT);
+usort($mine, fn(array $a, array $b): int => [$b['date'], $b['time']] <=> [$a['date'], $a['time']]);
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,9 +23,9 @@
         <li><a href="index.html">Главная</a></li>
         <li><a href="services.html">Услуги</a></li>
         <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.html">Запись</a></li>
+        <li><a href="booking.php">Запись</a></li>
         <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.html" class="active">Профиль</a></li>
+        <li><a href="profile.php" class="active">Профиль</a></li>
         <li><a href="login.html">Выйти</a></li>
         </ul>
       </nav>
@@ -45,16 +51,19 @@
               <tr><th>№</th><th>Услуга</th><th>Мастер</th><th>Дата</th><th>Статус</th></tr>
             </thead>
             <tbody>
-              <tr><td>#10452</td><td>Женская стрижка</td><td>Анна Ли</td><td>15.10.2026 14:00</td><td><span class="status pending">Ожидает</span></td></tr>
-              <tr><td>#10398</td><td>Маникюр</td><td>Мадина Ахметова</td><td>02.10.2026 12:00</td><td><span class="status confirmed">Подтверждена</span></td></tr>
-              <tr><td>#10211</td><td>Чистка лица</td><td>Алия Нурлан</td><td>18.09.2026 16:00</td><td><span class="status cancelled">Отменена</span></td></tr>
+<?php foreach ($mine as $r): ?>
+              <tr><td>#<?= (int) $r['id'] ?></td><td><?= h($r['service']) ?></td><td><?= h($r['master']) ?></td><td><?= h(date('d.m.Y', strtotime($r['date'])) . ' ' . $r['time']) ?></td><td><span class="status <?= h($r['status']) ?>"><?= h(STATUSES[$r['status']] ?? $r['status']) ?></span></td></tr>
+<?php endforeach; ?>
+<?php if (!$mine): ?>
+              <tr><td colspan="5">Записей пока нет. <a href="booking.php">Записаться</a></td></tr>
+<?php endif; ?>
             </tbody>
           </table>
         </div>
 
         <details class="edit">
           <summary>Редактировать профиль</summary>
-          <form action="profile.html">
+          <form action="profile.php">
             <div class="row">
               <div class="field"><label for="fn">Имя</label><input id="fn" value="Айгерим" required></div>
               <div class="field"><label for="ln">Фамилия</label><input id="ln" value="Садыкова" required></div>

@@ -1,3 +1,26 @@
+<?php
+require __DIR__ . '/data.php';
+
+$rows = load_bookings();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id     = (int) ($_POST['id'] ?? 0);
+    $status = (string) ($_POST['status'] ?? '');
+    if (isset(STATUSES[$status])) {
+        foreach ($rows as &$r) {
+            if ($r['id'] === $id) {
+                $r['status'] = $status;
+            }
+        }
+        unset($r);
+        save_bookings($rows);
+    }
+    header('Location: admin.php#bookings');
+    exit;
+}
+
+usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,9 +40,9 @@
         <li><a href="index.html">Главная</a></li>
         <li><a href="services.html">Услуги</a></li>
         <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.html">Запись</a></li>
+        <li><a href="booking.php">Запись</a></li>
         <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.html">Профиль</a></li>
+        <li><a href="profile.php">Профиль</a></li>
         <li><a href="login.html">Выйти</a></li>
         </ul>
       </nav>
@@ -40,7 +63,7 @@
         <h2>Дашборд</h2>
         <div class="stats">
           <div class="stat"><b>125</b>Пользователей</div>
-          <div class="stat"><b>48</b>Записей</div>
+          <div class="stat"><b><?= count($rows) ?></b>Записей</div>
           <div class="stat"><b>8</b>Услуг</div>
           <div class="stat"><b>5</b>Мастеров</div>
         </div>
@@ -62,7 +85,7 @@
 
       <section id="services">
         <h2>Услуги</h2>
-        <form class="inline-form" action="admin.html">
+        <form class="inline-form" action="admin.php">
           <input placeholder="Название" required>
           <select required><option value="">Категория</option><option>Волосы</option><option>Ногти</option><option>Лицо</option></select>
           <input type="number" placeholder="Цена, ₸" min="1000" required>
@@ -87,8 +110,25 @@
           <table>
             <thead><tr><th>№</th><th>Клиент</th><th>Услуга</th><th>Дата</th><th>Статус</th></tr></thead>
             <tbody>
-              <tr><td>#10452</td><td>Айгерим С.</td><td>Женская стрижка</td><td>15.10.2026 14:00</td><td><select><option selected>Ожидает</option><option>Подтверждена</option><option>Отменена</option></select></td></tr>
-              <tr><td>#10451</td><td>Тимур А.</td><td>Мужская стрижка</td><td>15.10.2026 10:00</td><td><select><option>Ожидает</option><option selected>Подтверждена</option><option>Отменена</option></select></td></tr>
+<?php foreach ($rows as $r): ?>
+              <tr>
+                <td>#<?= (int) $r['id'] ?></td>
+                <td><?= h($r['client']) ?></td>
+                <td><?= h($r['service']) ?></td>
+                <td><?= h(date('d.m.Y', strtotime($r['date'])) . ' ' . $r['time']) ?></td>
+                <td>
+                  <form action="admin.php" method="post" style="display:flex;gap:8px">
+                    <input type="hidden" name="id" value="<?= (int) $r['id'] ?>">
+                    <select name="status">
+<?php foreach (STATUSES as $key => $label): ?>
+                      <option value="<?= h($key) ?>"<?= $r['status'] === $key ? ' selected' : '' ?>><?= h($label) ?></option>
+<?php endforeach; ?>
+                    </select>
+                    <button class="btn btn-small">OK</button>
+                  </form>
+                </td>
+              </tr>
+<?php endforeach; ?>
             </tbody>
           </table>
         </div>
