@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/data.php'; ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,20 +10,10 @@
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="services.html" class="active">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 
@@ -32,7 +23,7 @@
 
   <main class="section">
     <div class="container">
-      <form class="search-bar" action="services.html">
+      <form class="search-bar" action="services.php">
         <input type="search" name="q" placeholder="Поиск услуги или мастера...">
         <button class="btn">Найти</button>
       </form>
@@ -58,7 +49,7 @@
             <p class="meta">Анна Ли · 60 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 8 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -69,7 +60,7 @@
             <p class="meta">Анна Ли · 180 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 25 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -80,7 +71,7 @@
             <p class="meta">Дана Ким · 45 мин</p>
             <p class="stars">★★★★☆</p>
             <p class="price">от 6 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -91,7 +82,7 @@
             <p class="meta">Ерлан Сеитов · 40 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 5 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card nails">
@@ -102,7 +93,7 @@
             <p class="meta">Мадина Ахметова · 60 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 7 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card nails">
@@ -113,7 +104,7 @@
             <p class="meta">Мадина Ахметова · 75 мин</p>
             <p class="stars">★★★★☆</p>
             <p class="price">от 9 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card face">
@@ -124,7 +115,7 @@
             <p class="meta">Алия Нурлан · 60 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 12 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card face">
@@ -135,7 +126,7 @@
             <p class="meta">Алия Нурлан · 50 мин</p>
             <p class="stars">★★★★☆</p>
             <p class="price">от 10 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
       </div>
@@ -146,8 +137,8 @@
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="about.php">О нас</a></li>
+        <li><a href="about.php#contact">Контакты</a></li>
         <li><a href="#">Конфиденциальность</a></li>
         <li><a href="#">Условия</a></li>
       </ul>

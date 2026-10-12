@@ -1,7 +1,9 @@
 <?php
 require __DIR__ . '/data.php';
 
-$v = ['service' => 'Женская стрижка', 'master' => '', 'date' => '', 'time' => '', 'phone' => '', 'note' => ''];
+$me = require_login();
+
+$v = ['service' => 'Женская стрижка', 'master' => '', 'date' => '', 'time' => '', 'phone' => $me['phone'], 'note' => ''];
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (!in_array($v['service'], SERVICES, true) || !in_array($v['master'], MASTERS, true)
+    if (!csrf_ok() || !in_array($v['service'], SERVICES, true) || !in_array($v['master'], MASTERS, true)
         || !in_array($v['time'], SLOTS, true) || !$dateOk
         || !preg_match('/^\+?[0-9 ]{10,16}$/', $v['phone'])) {
         $error = 'Проверьте, что все поля заполнены верно.';
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Это время у мастера уже занято — выберите другое.';
     } else {
         $id = $rows ? max(array_column($rows, 'id')) + 1 : 10001;
-        $rows[] = ['id' => $id, 'client' => DEMO_CLIENT] + $v + ['status' => 'pending'];
+        $rows[] = ['id' => $id, 'client' => client_name($me)] + $v + ['status' => 'pending'];
         save_bookings($rows);
         header('Location: confirm.php?id=' . $id);
         exit;
@@ -44,20 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="services.html">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php" class="active">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 
@@ -67,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php if ($error): ?>
       <p class="error" style="display:block;margin-bottom:14px"><?= h($error) ?></p>
       <?php endif; ?>
+      <?= csrf_field() ?>
       <div class="field">
         <label for="service">Услуга</label>
         <select id="service" name="service" required>

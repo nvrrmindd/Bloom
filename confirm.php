@@ -1,9 +1,12 @@
 <?php
 require __DIR__ . '/data.php';
 
+$me = require_login();
+
+// чужую запись видит только админ
 $booking = null;
 foreach (load_bookings() as $r) {
-    if ($r['id'] === (int) ($_GET['id'] ?? 0)) {
+    if ($r['id'] === (int) ($_GET['id'] ?? 0) && ($me['role'] === 'admin' || $r['client'] === client_name($me))) {
         $booking = $r;
     }
 }
@@ -22,20 +25,10 @@ if ($booking === null) {
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="services.html">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php" class="active">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 

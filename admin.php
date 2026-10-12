@@ -1,12 +1,15 @@
 <?php
 require __DIR__ . '/data.php';
 
-$rows = load_bookings();
+require_admin();
+
+$rows  = load_bookings();
+$users = load_users();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id     = (int) ($_POST['id'] ?? 0);
     $status = (string) ($_POST['status'] ?? '');
-    if (isset(STATUSES[$status])) {
+    if (csrf_ok() && isset(STATUSES[$status])) {
         foreach ($rows as &$r) {
             if ($r['id'] === $id) {
                 $r['status'] = $status;
@@ -32,20 +35,10 @@ usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="services.html">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 
@@ -55,14 +48,14 @@ usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
       <a href="#users">Пользователи</a>
       <a href="#services">Услуги</a>
       <a href="#bookings">Записи</a>
-      <a href="login.html">Выйти</a>
+      <a href="logout.php">Выйти</a>
     </aside>
 
     <main class="admin-main">
       <section id="dashboard">
         <h2>Дашборд</h2>
         <div class="stats">
-          <div class="stat"><b>125</b>Пользователей</div>
+          <div class="stat"><b><?= count($users) ?></b>Пользователей</div>
           <div class="stat"><b><?= count($rows) ?></b>Записей</div>
           <div class="stat"><b>8</b>Услуг</div>
           <div class="stat"><b>5</b>Мастеров</div>
@@ -75,9 +68,9 @@ usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
           <table>
             <thead><tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th></tr></thead>
             <tbody>
-              <tr><td>1</td><td>Айгерим Садыкова</td><td>aigerim@email.com</td><td>Клиент</td></tr>
-              <tr><td>2</td><td>Тимур Ахметов</td><td>timur@email.com</td><td>Клиент</td></tr>
-              <tr><td>3</td><td>Admin</td><td>admin@bloom.kz</td><td>Админ</td></tr>
+<?php foreach ($users as $u): ?>
+              <tr><td><?= (int) $u['id'] ?></td><td><?= h(full_name($u)) ?></td><td><?= h($u['email']) ?></td><td><?= $u['role'] === 'admin' ? 'Админ' : 'Клиент' ?></td></tr>
+<?php endforeach; ?>
             </tbody>
           </table>
         </div>
@@ -118,6 +111,7 @@ usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
                 <td><?= h(date('d.m.Y', strtotime($r['date'])) . ' ' . $r['time']) ?></td>
                 <td>
                   <form action="admin.php" method="post" style="display:flex;gap:8px">
+                    <?= csrf_field() ?>
                     <input type="hidden" name="id" value="<?= (int) $r['id'] ?>">
                     <select name="status">
 <?php foreach (STATUSES as $key => $label): ?>
@@ -140,8 +134,8 @@ usort($rows, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="about.php">О нас</a></li>
+        <li><a href="about.php#contact">Контакты</a></li>
         <li><a href="#">Конфиденциальность</a></li>
         <li><a href="#">Условия</a></li>
       </ul>

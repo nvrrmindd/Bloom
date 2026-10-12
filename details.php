@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/data.php'; ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,20 +10,10 @@
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="services.html" class="active">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 
@@ -53,8 +44,8 @@
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="about.php">О нас</a></li>
+        <li><a href="about.php#contact">Контакты</a></li>
         <li><a href="#">Конфиденциальность</a></li>
         <li><a href="#">Условия</a></li>
       </ul>

@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/data.php'; ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,30 +10,22 @@
 <body>
   <header>
     <div class="container">
-      <a href="index.html" class="logo">Bloom<span>.</span></a>
+      <a href="index.php" class="logo">Bloom<span>.</span></a>
       <input type="checkbox" id="menu-toggle">
       <label for="menu-toggle" class="burger">☰</label>
-      <nav>
-        <ul>
-        <li><a href="index.html" class="active">Главная</a></li>
-        <li><a href="services.html">Услуги</a></li>
-        <li><a href="masters.html">Мастера</a></li>
-        <li><a href="booking.php">Запись</a></li>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="profile.php">Профиль</a></li>
-        <li><a href="login.html">Выйти</a></li>
-        </ul>
-      </nav>
+      <?php require __DIR__ . "/nav.php"; ?>
     </div>
   </header>
 
   <main>
     <section class="hero">
       <div class="container">
-        <p class="user-hello fade-up">Привет, Айгерим 👋</p>
+<?php if ($me = current_user()): ?>
+        <p class="user-hello fade-up">Привет, <?= h($me['first']) ?></p>
+<?php endif; ?>
         <h1 class="fade-up delay-1">Красота начинается<br>с удобной записи</h1>
         <p class="fade-up delay-2">Выбирайте услугу, мастера и свободное время — запишитесь в салон онлайн за пару минут.</p>
-        <a href="services.html" class="btn btn-light fade-up delay-3">Записаться</a>
+        <a href="services.php" class="btn btn-light fade-up delay-3">Записаться</a>
       </div>
     </section>
 
@@ -71,7 +64,7 @@
             <p class="meta">Анна Ли · 60 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 8 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -82,7 +75,7 @@
             <p class="meta">Анна Ли · 180 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 25 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -93,7 +86,7 @@
             <p class="meta">Дана Ким · 45 мин</p>
             <p class="stars">★★★★☆</p>
             <p class="price">от 6 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         <article class="card hair">
@@ -104,7 +97,7 @@
             <p class="meta">Ерлан Сеитов · 40 мин</p>
             <p class="stars">★★★★★</p>
             <p class="price">от 5 000 ₸</p>
-            <a href="details.html" class="btn btn-small">Подробнее</a>
+            <a href="details.php" class="btn btn-small">Подробнее</a>
           </div>
         </article>
         </div>
@@ -116,8 +109,8 @@
     <div class="container">
       <p class="logo">Bloom<span>.</span></p>
       <ul>
-        <li><a href="about.html">О нас</a></li>
-        <li><a href="about.html#contact">Контакты</a></li>
+        <li><a href="about.php">О нас</a></li>
+        <li><a href="about.php#contact">Контакты</a></li>
         <li><a href="#">Конфиденциальность</a></li>
         <li><a href="#">Условия</a></li>
       </ul>
