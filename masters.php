@@ -1,4 +1,13 @@
-<?php require 'data.php'; ?>
+<?php
+require 'data.php';
+
+// расписание на выбранный день (по умолчанию — сегодня)
+$day = isset($_GET['date']) ? $_GET['date'] : '';
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+    $day = date('Y-m-d');
+}
+$bookings = load_bookings();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,18 +80,29 @@
         </article>
       </div>
 
-      <h2 class="section-title" style="margin-top:70px">Schedule for October 15</h2>
+      <h2 class="section-title" style="margin-top:70px">Schedule for <?= h(date('F j', strtotime($day))) ?></h2>
+      <form method="get" class="search-bar" style="max-width:320px;margin:0 auto 20px">
+        <input type="date" name="date" value="<?= h($day) ?>" onchange="this.form.submit()">
+        <noscript><button class="btn btn-small">Show</button></noscript>
+      </form>
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>Stylist</th><th>10:00</th><th>12:00</th><th>14:00</th><th>16:00</th><th>18:00</th></tr>
+            <tr><th>Stylist</th><?php foreach ($SLOTS as $t): ?><th><?= $t ?></th><?php endforeach; ?></tr>
           </thead>
           <tbody>
-            <tr><td>Anna Lee</td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td></tr>
-            <tr><td>Dana Kim</td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td></tr>
-            <tr><td>Yerlan Seitov</td><td><span class="status free">free</span></td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td><td><span class="status free">free</span></td></tr>
-            <tr><td>Madina Akhmetova</td><td><span class="status busy">booked</span></td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td><td><span class="status free">free</span></td><td><span class="status free">free</span></td></tr>
-            <tr><td>Aliya Nurlan</td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td><td><span class="status busy">booked</span></td><td><span class="status free">free</span></td><td><span class="status busy">booked</span></td></tr>
+            <?php foreach ($MASTERS as $name): $busy = busy_slots($bookings, $name, $day); ?>
+            <tr>
+              <td><?= h($name) ?></td>
+              <?php foreach ($SLOTS as $t): ?>
+              <?php if (in_array($t, $busy)): ?>
+              <td><span class="status busy">booked</span></td>
+              <?php else: ?>
+              <td><span class="status free">free</span></td>
+              <?php endif; ?>
+              <?php endforeach; ?>
+            </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>

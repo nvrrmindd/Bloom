@@ -70,6 +70,18 @@ function save_bookings($bookings)
     write_json(__DIR__ . '/data/bookings.json', $bookings);
 }
 
+// время, занятое у мастера в указанный день (отменённые записи не считаются)
+function busy_slots($bookings, $master, $date)
+{
+    $busy = [];
+    foreach ($bookings as $b) {
+        if ($b['master'] == $master && $b['date'] == $date && $b['status'] != 'cancelled') {
+            $busy[] = $b['time'];
+        }
+    }
+    return $busy;
+}
+
 /* ---------- пользователи ---------- */
 
 // демо-аккаунты: клиенты — bloom123, админ — admin123 (пароли хранятся в виде хеша)

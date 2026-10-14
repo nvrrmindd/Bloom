@@ -16,38 +16,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($v as $key => $value) {
         $v[$key] = trim($_POST[$key]);
     }
-    $bookings = load_bookings();
-
-    // занято ли это время у мастера
-    $busy = false;
-    foreach ($bookings as $b) {
-        if ($b['master'] == $v['master'] && $b['date'] == $v['date'] && $b['time'] == $v['time'] && $b['status'] != 'cancelled') {
-            $busy = true;
-        }
-    }
-
     if ($v['service'] == '' || $v['master'] == '' || $v['date'] == '' || $v['time'] == '') {
         $error = 'Please fill in all fields.';
+    } elseif (!in_array($v['master'], $MASTERS) || !in_array($v['time'], $SLOTS)) {
+        $error = 'Please choose a stylist and time from the list.';
     } elseif ($v['date'] < date('Y-m-d')) {
         $error = 'You cannot book a date in the past.';
-    } elseif ($busy) {
-        $error = 'This stylist is already booked at that time — choose another slot.';
     } else {
-        $id = $bookings[count($bookings) - 1]['id'] + 1;
-        $bookings[] = [
-            'id'      => $id,
-            'client'  => client_name($me),
-            'service' => $v['service'],
-            'master'  => $v['master'],
-            'date'    => $v['date'],
-            'time'    => $v['time'],
-            'phone'   => $me['phone'], // телефон из профиля
-            'note'    => $v['note'],
-            'status'  => 'pending',
-        ];
-        save_bookings($bookings);
-        header('Location: confirm.php?id=' . $id);
-        exit;
+        // блокировка: два одновременных запроса не смогут занять один слот
+        $lock = fopen(__DIR__ . '/data/booking.lock', 'c');
+        flock($lock, LOCK_EX);
+        $bookings = load_bookings();
+
+        if (in_array($v['time'], busy_slots($bookings, $v['master'], $v['date']))) {
+            $error = 'This stylist is already booked at that time — choose another slot.';
+        } else {
+            $id = $bookings[count($bookings) - 1]['id'] + 1;
+            $bookings[] = [
+                'id'      => $id,
+                'client'  => client_name($me),
+                'service' => $v['service'],
+                'master'  => $v['master'],
+                'date'    => $v['date'],
+                'time'    => $v['time'],
+                'phone'   => $me['phone'], // телефон из профиля
+                'note'    => $v['note'],
+                'status'  => 'pending',
+            ];
+            save_bookings($bookings);
+        }
+        flock($lock, LOCK_UN);
+        fclose($lock);
+
+        if ($error == '') {
+            header('Location: confirm.php?id=' . $id);
+            exit;
+        }
     }
 }
 ?>
@@ -101,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           <select id="time" name="time" required>
             <option value="">—</option>
             <?php foreach ($SLOTS as $t): ?>
-            <option<?= $v['time'] == $t ? ' selected' : '' ?>><?= $t ?></option>
+            <option value="<?= $t ?>"<?= $v['time'] == $t ? ' selected' : '' ?>><?= $t ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -113,5 +117,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <button class="btn">Confirm</button>
     </form>
   </main>
+
+  <script>
+    // показываем только свободное время выбранного мастера на выбранную дату
+    var master = document.getElementById('master'),
+        date = document.getElementById('date'),
+        time = document.getElementById('time');
+
+    function refreshSlots() {
+      if (!date.value) return;
+      fetch('slots.php?master=' + encodeURIComponent(master.value) + '&date=' + encodeURIComponent(date.value))
+        .then(function (r) { return r.json(); })
+        .then(function (busy) {
+          Array.prototype.forEach.call(time.options, function (o) {
+            if (o.value === '') return;
+            var taken = busy.indexOf(o.value) !== -1;
+            o.disabled = taken;
+            o.textContent = o.value + (taken ? ' (booked)' : '');
+            if (taken && o.selected) time.value = '';
+          });
+        });
+    }
+    master.addEventListener('change', refreshSlots);
+    date.addEventListener('change', refreshSlots);
+    refreshSlots();
+  </script>
 </body>
 </html>
