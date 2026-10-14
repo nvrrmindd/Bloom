@@ -3,7 +3,6 @@ require 'data.php';
 
 $me = require_login();
 
-// ищем запись по номеру из адреса; чужую запись видит только админ
 $booking = null;
 foreach (load_bookings() as $b) {
     if ($b['id'] == $_GET['id'] && ($me['role'] == 'admin' || $b['client'] == client_name($me))) {

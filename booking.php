@@ -9,7 +9,7 @@ foreach (load_services() as $s) {
     $serviceNames[] = $s['name'];
 }
 
-$v = ['service' => '', 'master' => '', 'date' => '', 'time' => '', 'phone' => $me['phone'], 'note' => ''];
+$v = ['service' => '', 'master' => '', 'date' => '', 'time' => '', 'note' => ''];
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($v['service'] == '' || $v['master'] == '' || $v['date'] == '' || $v['time'] == '' || $v['phone'] == '') {
+    if ($v['service'] == '' || $v['master'] == '' || $v['date'] == '' || $v['time'] == '') {
         $error = 'Please fill in all fields.';
     } elseif ($v['date'] < date('Y-m-d')) {
         $error = 'You cannot book a date in the past.';
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'master'  => $v['master'],
             'date'    => $v['date'],
             'time'    => $v['time'],
-            'phone'   => $v['phone'],
+            'phone'   => $me['phone'], // телефон из профиля
             'note'    => $v['note'],
             'status'  => 'pending',
         ];
@@ -105,11 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endforeach; ?>
           </select>
         </div>
-      </div>
-      <div class="field">
-        <label for="phone">Phone</label>
-        <input type="tel" id="phone" name="phone" value="<?= h($v['phone']) ?>" placeholder="+7 777 123 45 67" pattern="\+?[0-9 ]{10,16}" required>
-        <span class="error">Enter a valid phone number</span>
       </div>
       <div class="field">
         <label for="note">Notes</label>

@@ -2,6 +2,57 @@
 require 'data.php';
 
 $me = require_login();
+$error = '';
+
+// сохранение профиля
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $first = trim($_POST['first']);
+    $last  = trim($_POST['last']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $users = load_users();
+
+    // email не должен быть занят другим пользователем
+    $emailTaken = false;
+    foreach ($users as $user) {
+        if (strtolower($user['email']) == strtolower($email) && $user['id'] != $me['id']) {
+            $emailTaken = true;
+        }
+    }
+
+    if ($first == '' || $last == '' || $email == '') {
+        $error = 'Please fill in all required fields.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Enter a valid email.';
+    } elseif ($emailTaken) {
+        $error = 'A user with this email already exists.';
+    } else {
+        $oldName = client_name($me);
+        foreach ($users as $i => $user) {
+            if ($user['id'] == $me['id']) {
+                $users[$i]['first'] = $first;
+                $users[$i]['last']  = $last;
+                $users[$i]['email'] = $email;
+                $users[$i]['phone'] = $phone;
+                $me = $users[$i];
+            }
+        }
+        save_users($users);
+
+        // в записях клиент подписан именем — обновляем его, чтобы история не потерялась
+        $bookings = load_bookings();
+        foreach ($bookings as $i => $b) {
+            if ($b['client'] == $oldName) {
+                $bookings[$i]['client'] = client_name($me);
+                $bookings[$i]['phone']  = $phone;
+            }
+        }
+        save_bookings($bookings);
+
+        header('Location: profile.php?saved=1');
+        exit;
+    }
+}
 
 // записи этого клиента
 $mine = [];
@@ -62,17 +113,28 @@ foreach (load_bookings() as $b) {
           </table>
         </div>
 
-        <details class="edit">
+<?php if (isset($_GET['saved'])): ?>
+        <p style="color:#2e7d4a;margin-top:20px">Profile saved.</p>
+<?php endif; ?>
+        <details class="edit" <?= $error != '' ? 'open' : '' ?>>
           <summary>Edit profile</summary>
-          <form action="profile.php">
+          <form action="profile.php" method="post">
+<?php if ($error != ''): ?>
+            <p class="error" style="display:block;margin-bottom:14px"><?= h($error) ?></p>
+<?php endif; ?>
             <div class="row">
-              <div class="field"><label for="fn">First name</label><input id="fn" value="<?= h($me['first']) ?>" required></div>
-              <div class="field"><label for="ln">Last name</label><input id="ln" value="<?= h($me['last']) ?>" required></div>
+              <div class="field"><label for="fn">First name *</label><input id="fn" name="first" value="<?= h($me['first']) ?>" required></div>
+              <div class="field"><label for="ln">Last name *</label><input id="ln" name="last" value="<?= h($me['last']) ?>" required></div>
             </div>
             <div class="field">
-              <label for="em">Email</label>
-              <input type="email" id="em" value="<?= h($me['email']) ?>" placeholder="you@email.com" required>
+              <label for="em">Email *</label>
+              <input type="email" id="em" name="email" value="<?= h($me['email']) ?>" placeholder="you@email.com" required>
               <span class="error">Enter a valid email</span>
+            </div>
+            <div class="field">
+              <label for="ph">Phone</label>
+              <input type="tel" id="ph" name="phone" value="<?= h($me['phone']) ?>" placeholder="+7 777 123 45 67" pattern="\+?[0-9 ]{10,16}">
+              <span class="error">Invalid phone format</span>
             </div>
             <button class="btn">Save</button>
           </form>
